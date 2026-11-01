@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101820">
+<title>Clash Tracker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0c131b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:20px 16px 100px}header{padding:18px 4px}header h1{font-size:25px;margin:0;color:#f4bd55}header p,.muted{color:#9eabb8;font-size:13px}.hero,.card{background:#192633;border:1px solid #30404d;border-radius:19px;padding:17px;margin-bottom:13px}.hero{background:linear-gradient(130deg,#344b58,#17232e)}.hero h2{margin:8px 0;font-size:25px}.hero p{color:#c6d1d8;font-size:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#111c26;border-radius:14px;padding:13px}.stat small{color:#9eabb8}.stat strong{display:block;font-size:25px;margin-top:7px}.section{margin:24px 2px 12px;font-size:17px}.field{margin:12px 0}.field label{display:block;color:#aab7c1;font-size:12px;margin-bottom:7px}input,select{width:100%;background:#0d1821;color:white;border:1px solid #40515e;border-radius:11px;padding:13px;font-size:16px}button{cursor:pointer}.save{background:#f2bd58;color:#211b10;border:0;border-radius:12px;padding:14px;width:100%;font-weight:800;font-size:15px}.tabs{position:fixed;bottom:0;left:0;right:0;background:#111c26;border-top:1px solid #34424e;display:flex;padding:9px 3px calc(9px + env(safe-area-inset-bottom));justify-content:space-around}.tabs button{background:none;border:0;color:#aab7c1;font-size:11px;padding:6px}.tabs button b{display:block;font-size:20px;margin-bottom:3px}.tabs button.active{color:#f2bd58}.view{display:none}.view.active{display:block}.progress{height:9px;background:#344451;border-radius:20px;margin-top:10px;overflow:hidden}.progress span{display:block;height:100%;background:#67d69a}.note{color:#9eabb8;font-size:12px;line-height:1.5}
+</style>
+</head>
+<body>
+<header><h1>⚔️ CLASH TRACKER</h1><p>TON VILLAGE · TA PROGRESSION</p></header>
+<main>
+<section id="home" class="view active">
+<div class="hero"><small style="color:#f2bd58">TABLEAU DE BORD</small><h2 id="welcome">Bienvenue, Chef !</h2><p>Prêt à faire progresser ton village ?</p><span id="hdvBadge">🏰 HDV 1</span></div>
+<h3 class="section">📊 Mes statistiques</h3>
+<div class="grid">
+<div class="stat"><small>🏆 Trophées</small><strong id="trophiesStat">0</strong></div>
+<div class="stat"><small>⚔️ Victoires</small><strong id="winsStat">0</strong></div>
+<div class="stat"><small>🛡️ HDV</small><strong id="hdvStat">1</strong></div>
+<div class="stat"><small>📈 Progression</small><strong id="progressStat">0%</strong><div class="progress"><span id="progressBar" style="width:0%"></span></div></div>
+</div>
+<h3 class="section">⚡ Mon suivi</h3>
+<div class="card">🏰 Village · 🦸 Héros · ⚔️ Attaques · 👥 Clan<p class="muted">Utilise les onglets en bas pour gérer chaque rubrique.</p></div>
+<p class="note">Version initiale : tes données sont enregistrées sur cet appareil. La connexion officielle au jeu viendra dans une prochaine étape.</p>
+</section>
+<section id="village" class="view">
+<h2>🏰 Mon village</h2><div class="card">
+<div class="field"><label>Nom du joueur</label><input id="name" placeholder="Ton pseudo"></div>
+<div class="field"><label>Tag joueur</label><input id="tag" placeholder="#ABC123"></div>
+<div class="field"><label>Hôtel de ville</label><select id="hdv"></select></div>
+<div class="field"><label>Trophées</label><input id="trophies" type="number" min="0"></div>
+<div class="field"><label>Progression (%)</label><input id="progress" type="number" min="0" max="100"></div>
+<button class="save" onclick="saveVillage()">ENREGISTRER</button></div>
+</section>
+<section id="heroes" class="view"><h2>🦸 Mes héros</h2><div class="card" id="heroFields"></div><button class="save" onclick="saveHeroes()">ENREGISTRER LES HÉROS</button></section>
+<section id="attacks" class="view"><h2>⚔️ Mes attaques</h2><div class="grid"><div class="stat"><small>Victoires</small><strong id="wins">0</strong></div><div class="stat"><small>Défaites</small><strong id="losses">0</strong></div></div><div class="card"><button class="save" onclick="changeAttack('wins')">+ AJOUTER UNE VICTOIRE</button><br><br><button class="save" onclick="changeAttack('losses')">+ AJOUTER UNE DÉFAITE</button></div></section>
+<section id="clan" class="view"><h2>👥 Mon clan</h2><div class="card"><div class="field"><label>Nom du clan</label><input id="clanName" placeholder="Nom du clan"></div><div class="field"><label>Tag du clan</label><input id="clanTag" placeholder="#TAG"></div><div class="field"><label>Mon rôle</label><select id="role"><option>Membre</option><option>Aîné</option><option>Chef adjoint</option><option>Chef</option></select></div><button class="save" onclick="saveClan()">ENREGISTRER LE CLAN</button></div></section>
+</main>
+<nav class="tabs">
+<button class="active" data-page="home"><b>⌂</b>Accueil</button>
+<button data-page="village"><b>🏰</b>Village</button>
+<button data-page="heroes"><b>🦸</b>Héros</button>
+<button data-page="attacks"><b>⚔️</b>Attaques</button>
+<button data-page="clan"><b>👥</b>Clan</button>
+</nav>
+<script>
+const $=id=>document.getElementById(id);
+const defaults={name:'Chef',tag:'',hdv:1,trophies:0,progress:0,wins:0,losses:0,clanName:'',clanTag:'',role:'Membre',heroes:{'Roi des barbares':0,'Reine des archères':0,'Grand gardien':0,'Championne royale':0,'Prince gargouille':0}};
+let d={...defaults,...JSON.parse(localStorage.getItem('clashTracker')||'{}')};d.heroes={...defaults.heroes,...(d.heroes||{})};
+for(let i=1;i<=18;i++)$('hdv').add(new Option('HDV '+i,i));
+function store(){localStorage.setItem('clashTracker',JSON.stringify(d));render();alert('Données enregistrées !')}
+function render(){$('welcome').textContent='Bienvenue, '+d.name+' !';$('hdvBadge').textContent='🏰 HDV '+d.hdv;$('hdvStat').textContent=d.hdv;$('trophiesStat').textContent=d.trophies;$('winsStat').textContent=d.wins;$('progressStat').textContent=d.progress+'%';$('progressBar').style.width=d.progress+'%';$('wins').textContent=d.wins;$('losses').textContent=d.losses}
+function fill(){$('name').value=d.name;$('tag').value=d.tag;$('hdv').value=d.hdv;$('trophies').value=d.trophies;$('progress').value=d.progress;$('clanName').value=d.clanName;$('clanTag').value=d.clanTag;$('role').value=d.role;$('heroFields').innerHTML=Object.entries(d.heroes).map(([n,v],i)=>'<div class="field"><label>'+n+'</label><input type="number" min="0" data-hero="'+i+'" value="'+v+'"></div>').join('');render()}
+function saveVillage(){d.name=$('name').value||'Chef';d.tag=$('tag').value;d.hdv=+$('hdv').value;d.trophies=+$('trophies').value||0;d.progress=Math.min(100,Math.max(0,+$('progress').value||0));store()}
+function saveHeroes(){document.querySelectorAll('[data-hero]').forEach(x=>d.heroes[Object.keys(d.heroes)[+x.dataset.hero]]=+x.value||0);store()}
+function changeAttack(k){d[k]++;store()}
+function saveClan(){d.clanName=$('clanName').value;d.clanTag=$('clanTag').value;d.role=$('role').value;store()}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(b.dataset.page).classList.add('active');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x===b));window.scrollTo(0,0)});
+fill();
+</script>
+</body>
+</html>
